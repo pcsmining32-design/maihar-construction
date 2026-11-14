@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each user may read ONLY their own permission doc. Nobody can write from the app.
+    match /userRoles/{email} {
+      allow read: if request.auth != null && request.auth.token.email.lower() == email;
+      allow write: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
